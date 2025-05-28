@@ -4,135 +4,218 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Isla de Aventuras de Suri</title>
+  <link rel="stylesheet" href="styles.css">
   <style>
-    /* Reset básico */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: #87ceeb; /* cielo azul */
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    header {
-      background: #006994; /* azul oscuro */
-      color: #fff;
-      padding: 1rem;
-      text-align: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-    header h1 {
-      font-size: 1.5rem;
-    }
-
-    nav {
-      margin-top: 0.5rem;
-    }
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      margin: 0 0.5rem;
-      font-weight: bold;
-    }
-
-    main {
-      flex: 1;
-      padding: 1rem;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    /* Mapa de la isla */
-    #game-map {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-      grid-gap: 1rem;
-      width: 100%;
-      max-width: 800px;
-    }
-
-    .island {
-      background: #ffebcd; /* arena */
-      border: 2px solid #dda15e;
-      border-radius: 0.5rem;
-      padding: 1rem;
-      text-align: center;
+    .hidden { display: none; }
+    .auth-container, .level-container {
+      max-width: 400px;
+      margin: 2rem auto;
+      background: #fff;
+      padding: 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       position: relative;
-      cursor: pointer;
-      transition: transform 0.2s;
     }
-    .island:hover {
-      transform: translateY(-5px);
+    header, footer { text-align: center; background: #006994; color: #fff; padding: 1rem; }
+    nav a { margin: 0 0.5rem; color: #fff; text-decoration: none; }
+    .level-container canvas { background: #87ceeb; display: block; margin: 1rem auto; }
+    .level-container p.instructions { font-size: 0.9rem; margin-bottom: 0.5rem; }
+    .timer { font-weight: bold; margin-bottom: 0.5rem; text-align: center; }
+    .message-overlay {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.8); color: #fff;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 1.2rem; border-radius: 8px;
     }
-
-    .island img {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
-      margin-bottom: 0.5rem;
-    }
-
-    .island span {
-      display: block;
-      font-weight: bold;
-      margin-top: 0.5rem;
-    }
-
-    /* Footer */
-    footer {
-      background: #006994;
-      color: #fff;
-      text-align: center;
-      padding: 0.5rem;
-      font-size: 0.9rem;
-    }
+    .message-overlay button { margin-top: 1rem; padding: 0.5rem 1rem; background: #28a745; border: none; border-radius: 4px; color: #fff; cursor: pointer; }
+    .auth-container h2, .level-container h2 { text-align: center; margin-bottom: 1rem; }
+    .auth-container label, .level-container label { display: block; margin-top: 0.8rem; }
+    .auth-container input, .level-container input { width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #ccc; border-radius: 4px; }
+    .auth-container button, .level-container button { width: 100%; padding: 0.7rem; margin-top: 1rem; background: #006994; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
   </style>
 </head>
 <body>
   <header>
     <h1>Isla de Aventuras de Suri</h1>
     <nav>
-      <a href="#">Inicio</a>
-      <a href="#">Mapa</a>
-      <a href="#">Perfil</a>
+      <a href="#" onclick="showSection('auth')">Login/Registro</a>
+      <a href="#" onclick="showSection('mapa')">Mapa</a>
+      <a href="#" onclick="showSection('perfil')">Perfil</a>
     </nav>
   </header>
 
-  <main>
+  <!-- Autenticación -->
+  <main id="auth" class="auth-container">
+    <div id="login-form">
+      <h2>Iniciar Sesión</h2>
+      <label for="email">Correo:</label>
+      <input type="email" id="email" required>
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" required>
+      <button onclick="login()">Entrar</button>
+      <p style="text-align:center; margin-top:1rem;">¿No tienes cuenta? <a href="#" onclick="toggleAuth('register')">Regístrate</a></p>
+    </div>
+    <div id="register-form" class="hidden">
+      <h2>Regístrate</h2>
+      <label for="reg-name">Nombre:</label>
+      <input type="text" id="reg-name" required>
+      <label for="reg-email">Correo:</label>
+      <input type="email" id="reg-email" required>
+      <label for="reg-password">Contraseña:</label>
+      <input type="password" id="reg-password" required>
+      <button onclick="register()">Crear Cuenta</button>
+      <p style="text-align:center; margin-top:1rem;">¿Ya tienes cuenta? <a href="#" onclick="toggleAuth('login')">Inicia sesión</a></p>
+    </div>
+  </main>
+
+  <!-- Mapa -->
+  <main id="mapa" class="hidden">
     <div id="game-map">
-      <div class="island" id="island-1">
+      <div class="island" id="island-1" onclick="startLevel(1)">
         <img src="https://via.placeholder.com/60" alt="Isla del Tesoro">
         <span>Isla del Tesoro</span>
       </div>
-      <div class="island" id="island-2">
-        <img src="https://via.placeholder.com/60" alt="Isla de los Puzzles">
-        <span>Isla de los Puzzles</span>
-      </div>
-      <div class="island" id="island-3">
-        <img src="https://via.placeholder.com/60" alt="Isla de Plataformas">
-        <span>Isla de Plataformas</span>
-      </div>
-      <div class="island" id="island-4">
-        <img src="https://via.placeholder.com/60" alt="Isla de Aventuras">
-        <span>Isla de Aventuras</span>
-      </div>
-      <div class="island" id="island-5">
-        <img src="https://via.placeholder.com/60" alt="Isla de Desafíos">
-        <span>Isla de Desafíos</span>
-      </div>
     </div>
+  </main>
+
+  <!-- Nivel 1 con juego de teclado -->
+  <main id="level-1" class="level-container hidden">
+    <h2>Nivel 1: Isla del Tesoro</h2>
+    <p class="instructions">Usa las flechas del teclado para mover a Suri (imagen). Recoge <strong>5 monedas</strong> antes de que el tiempo se agote.</p>
+    <div class="timer">Tiempo: <span id="time">30</span>s</div>
+    <canvas id="game-canvas" width="300" height="300"></canvas>
+    <button id="finish-btn" onclick="completeLevel(1)" disabled>Finalizar Nivel</button>
+    <div id="message" class="message-overlay hidden">
+      <div id="message-text"></div>
+      <button onclick="retryLevel()">Intentar de nuevo</button>
+    </div>
+  </main>
+
+  <!-- Perfil -->
+  <main id="perfil" class="hidden auth-container">
+    <h2>Mi Perfil</h2>
+    <p>Usuario: <span id="user-name">-</span></p>
+    <p>Niveles completados: <span id="levels-completed">0</span></p>
   </main>
 
   <footer>
     &copy; 2025 Isla de Aventuras de Suri
   </footer>
+
+  <script>
+    function showSection(id) {
+      ['auth','mapa','level-1','perfil'].forEach(sec => document.getElementById(sec).classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+    function toggleAuth(form) {
+      document.getElementById('login-form').classList.toggle('hidden');
+      document.getElementById('register-form').classList.toggle('hidden');
+    }
+    let user = { name: '', completed: [] };
+    function login() { user.name = document.getElementById('email').value; showSection('mapa'); document.getElementById('user-name').textContent = user.name; }
+    function register() { user.name = document.getElementById('reg-name').value; showSection('mapa'); document.getElementById('user-name').textContent = user.name; }
+
+    // Juego nivel 1 con temporizador y mensajes
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    const player = { x: 140, y: 140, size: 30 };
+    const playerImage = new Image(); playerImage.src = 'suri.png';
+    let coins = [];
+    let collected = 0, timer = null, timeLeft = 30;
+
+    function initLevel() {
+      // Reset estado
+      collected = 0;
+      coins = [];
+      // Generar monedas
+      for (let i = 0; i < 5; i++) {
+        coins.push({ x: Math.random() * (canvas.width - 20), y: Math.random() * (canvas.height - 20), size: 10 });
+      }
+      // Reset player posición
+      player.x = 140;
+      player.y = 140;
+      // Reset UI
+      document.getElementById('time').textContent = '30';
+      timeLeft = 30;
+      document.getElementById('finish-btn').disabled = true;
+      document.getElementById('message').classList.add('hidden');
+      // Cancelar timer previo y empezar uno nuevo
+      if (timer) clearInterval(timer);
+      timer = setInterval(tick, 1000);
+      draw();
+    }
+
+    function tick() {
+      timeLeft--;
+      document.getElementById('time').textContent = timeLeft;
+      if (timeLeft <= 0) {
+        clearInterval(timer);
+        endGame(false);
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // Dibujar jugador
+      ctx.drawImage(playerImage, player.x, player.y, player.size, player.size);
+      // Dibujar monedas
+      coins.forEach((c) => {
+        ctx.beginPath();
+        ctx.arc(c.x, c.y, c.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'gold';
+        ctx.fill();
+      });
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (document.getElementById('level-1').classList.contains('hidden')) return;
+      const speed = 5;
+      switch (e.key) {
+        case 'ArrowUp': player.y = Math.max(0, player.y - speed); break;
+        case 'ArrowDown': player.y = Math.min(canvas.height - player.size, player.y + speed); break;
+        case 'ArrowLeft': player.x = Math.max(0, player.x - speed); break;
+        case 'ArrowRight': player.x = Math.min(canvas.width - player.size, player.x + speed); break;
+      }
+      // Revisión de colisiones
+      for (let i = coins.length - 1; i >= 0; i--) {
+        const c = coins[i];
+        const dx = player.x - c.x;
+        const dy = player.y - c.y;
+        if (Math.hypot(dx, dy) < player.size) {
+          coins.splice(i, 1);
+          collected++;
+        }
+      }
+      draw();
+      if (collected === 5) {
+        clearInterval(timer);
+        endGame(true);
+      }
+    });
+
+    function startLevel(n) {
+      showSection('level-1');
+      initLevel();
+    }
+
+    function endGame(win) {
+      document.getElementById('message-text').textContent = win ? '¡Ganaste!' : '¡Perdiste!';
+      document.getElementById('message').classList.remove('hidden');
+      document.getElementById('finish-btn').disabled = true;
+      if (win) {
+        user.completed.push(1);
+        document.getElementById('levels-completed').textContent = user.completed.length;
+      }
+    }
+
+    function retryLevel() {
+      initLevel();
+    }
+
+    // Mostrar pantalla de autenticación al iniciar la página
+    window.onload = function() {
+      showSection('auth');
+    };
+  </script>
 </body>
 </html>
