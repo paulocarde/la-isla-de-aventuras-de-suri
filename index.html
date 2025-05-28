@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Isla de Aventuras de Suri</title>
+  <style>
+    /* Reset básico */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: #87ceeb; /* cielo azul */
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #006994; /* azul oscuro */
+      color: #fff;
+      padding: 1rem;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    header h1 {
+      font-size: 1.5rem;
+    }
+
+    nav {
+      margin-top: 0.5rem;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin: 0 0.5rem;
+      font-weight: bold;
+    }
+
+    main {
+      flex: 1;
+      padding: 1rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    /* Mapa de la isla */
+    #game-map {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      grid-gap: 1rem;
+      width: 100%;
+      max-width: 800px;
+    }
+
+    .island {
+      background: #ffebcd; /* arena */
+      border: 2px solid #dda15e;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .island:hover {
+      transform: translateY(-5px);
+    }
+
+    .island img {
+      width: 60px;
+      height: 60px;
+      object-fit: contain;
+      margin-bottom: 0.5rem;
+    }
+
+    .island span {
+      display: block;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+
+    /* Footer */
+    footer {
+      background: #006994;
+      color: #fff;
+      text-align: center;
+      padding: 0.5rem;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Isla de Aventuras de Suri</h1>
+    <nav>
+      <a href="#">Inicio</a>
+      <a href="#">Mapa</a>
+      <a href="#">Perfil</a>
+    </nav>
+  </header>
+
+  <main>
+    <div id="game-map">
+      <div class="island" id="island-1">
+        <img src="https://via.placeholder.com/60" alt="Isla del Tesoro">
+        <span>Isla del Tesoro</span>
+      </div>
+      <div class="island" id="island-2">
+        <img src="https://via.placeholder.com/60" alt="Isla de los Puzzles">
+        <span>Isla de los Puzzles</span>
+      </div>
+      <div class="island" id="island-3">
+        <img src="https://via.placeholder.com/60" alt="Isla de Plataformas">
+        <span>Isla de Plataformas</span>
+      </div>
+      <div class="island" id="island-4">
+        <img src="https://via.placeholder.com/60" alt="Isla de Aventuras">
+        <span>Isla de Aventuras</span>
+      </div>
+      <div class="island" id="island-5">
+        <img src="https://via.placeholder.com/60" alt="Isla de Desafíos">
+        <span>Isla de Desafíos</span>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Isla de Aventuras de Suri
+  </footer>
+</body>
+</html>
